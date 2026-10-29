@@ -1,0 +1,15 @@
+[server]
+maxUploadSize = 500
+
+[theme]
+base = "dark"
+primaryColor = "#2dd4bf"
+backgroundColor = "#07111f"
+secondaryBackgroundColor = "#0d1b2e"
+textColor = "#e8eef7"
+borderColor = "#20334a"
+baseRadius = "medium"
+showSidebarBorder = true
+
+[theme.sidebar]
+backgroundColor = "#091727"

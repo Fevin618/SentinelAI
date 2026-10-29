@@ -1,0 +1,229 @@
+=====================================================================
+  SentinelAI - RUN COMMANDS AND DEMO GUIDE (for the faculty review)
+=====================================================================
+
+All commands are run in PowerShell (or Command Prompt) from the
+project folder:
+
+    cd D:\SentinelAI
+
+We use the Anaconda Python, because it has scikit-learn 1.7.2,
+the same version the saved models were trained with.
+
+
+---------------------------------------------------------------------
+PART 1 - ONE-TIME SETUP (only on a new computer)
+---------------------------------------------------------------------
+
+1. Install the libraries:
+
+    C:/Users/Admin/Anaconda/python.exe -m pip install -r requirements.txt
+
+2. Check that the dataset is in place (8 CSV files):
+
+    dir data\MachineLearningCSV
+
+
+---------------------------------------------------------------------
+PART 2 - COMMANDS TO RUN THE PROJECT
+---------------------------------------------------------------------
+
+A) Run the automated tests  (about 10 seconds)
+   Shows the code works. Expected result: "19 passed".
+
+    C:/Users/Admin/Anaconda/python.exe -m pytest -q tests
+
+B) Launch the dashboard  (the main demo)
+
+    C:/Users/Admin/Anaconda/python.exe -m streamlit run dashboard/app.py
+
+   It opens in the browser at:  http://localhost:8501
+   If it does not open by itself, type that address into the browser.
+   To stop it: press Ctrl + C in the terminal.
+
+
+---------------------------------------------------------------------
+PART 3 - OPTIONAL: RE-CREATE THE RESULTS FROM SCRATCH
+---------------------------------------------------------------------
+
+!! WARNING: these read the full 848 MB dataset. They take several
+!! minutes each and OVERWRITE the saved models and reports.
+!! Do NOT run them just before the review. The dashboard already
+!! uses the saved results. Only run them if sir asks to see training.
+
+1. Inspect the dataset (row counts, labels, missing values)
+   -> writes reports/dataset_inspection.json
+
+    C:/Users/Admin/Anaconda/python.exe -m src.inspect_data
+
+2. Train the main Random Forest model and test it on Wednesday
+   -> writes models/random_forest_binary.joblib
+      and reports/baseline_evaluation.json
+
+    C:/Users/Admin/Anaconda/python.exe -m src.train
+
+3. Compare the three models (RF weighted, RF unweighted, Logistic Regression)
+   -> writes models/comparison/*.joblib and reports/model_comparison.json
+
+    C:/Users/Admin/Anaconda/python.exe -m src.compare_models
+
+4. Train the attack-type model (names the attack: DDoS, PortScan, ...)
+   -> writes models/random_forest_threat_type.joblib
+      and reports/threat_type_evaluation.json
+
+    C:/Users/Admin/Anaconda/python.exe -m src.threat_type
+
+5. Re-create the demo sample used in the dashboard
+   -> writes data/processed/wednesday_demo_sample.csv
+
+    C:/Users/Admin/Anaconda/python.exe -m src.make_demo_sample
+
+6. Make a small cleaned sample of the data (for development only)
+   -> writes data/processed/clean_sample.csv
+
+    C:/Users/Admin/Anaconda/python.exe -m src.preprocess
+
+
+---------------------------------------------------------------------
+PART 4 - WHAT TO SHOW SIR (demo order, about 8-10 minutes)
+---------------------------------------------------------------------
+
+BEFORE THE REVIEW
+  [ ] Start the dashboard (Part 2, step B) and keep the browser open.
+  [ ] Run the tests once (Part 2, step A) so the "19 passed" result
+      is on screen.
+  [ ] Keep the PPT open: output\presentation\SentinelAI_Presentation.pptx
+  [ ] In the sidebar, Active model = Random Forest.
+
+STEP 1 - Tests (30 seconds)
+  Show the terminal with "19 passed".
+  Say: "We have 19 automated tests covering data cleaning, model
+  loading, upload checks and the history database."
+
+STEP 2 - Overview page (1-2 minutes)
+  Point to:
+  - The 4 cards: 2.83 M records, 19.7% attacks, 14 attack types,
+    78 features.
+  - "How well does it catch attacks?": familiar traffic 99.2%
+    vs unseen day 20.0%.
+  - The blue box: the key finding.
+  Say: "On traffic similar to training it is near perfect, but on a
+  day it never saw it catches only 20%. We report both honestly."
+
+STEP 3 - Analyze traffic (2-3 minutes)  <- MAIN DEMO
+  1. Keep "Demo sample" selected, press "Run analysis with Random Forest".
+  2. Show the 4 result cards:
+       1,811 records checked
+       973 flagged as attack (54%)
+       698 critical alerts
+       81.2% agree with the true label
+  3. Alerts tab: show the severity filter (click Critical only).
+     Point to ROW 6: true label is Heartbleed, but the type is shown
+     as "uncertain". Say: "Heartbleed has only 11 examples in the
+     whole dataset, so the model admits it does not know instead of
+     guessing wrong."
+  4. Summary tab: donut chart + attack types found (mostly DoS).
+  5. All records tab: True label vs Prediction side by side.
+  6. (Optional) Open "Alert settings" and explain the sliders.
+  7. (Optional) Press "Save results to history".
+
+STEP 4 - Explain a prediction (1-2 minutes)
+  1. Keep "Attacks" selected, record "Row 2 - DoS GoldenEye".
+  2. Explain the chart: red bars push towards ATTACK, teal bars push
+     towards NORMAL, and longer bars matter more.
+  3. Say: "Destination port and packet timing made the model
+     suspicious. This is SHAP, explainable AI."
+  4. Switch to "Normal" and show the bars turn mostly teal.
+
+STEP 5 - Model performance (1-2 minutes)
+  1. Table: 3 models on the unseen day.
+       Random Forest        : 20.0% caught, 0.0% false alarms
+       Logistic Regression  : 32.9% caught, 6.0% false alarms
+  2. Trade-off chart: more attacks caught = more false alarms.
+  3. Four cards = confusion matrix in plain words
+     (600 caught, 2,400 missed, 3,000 correctly passed, 0 false alarms).
+  4. Click "Familiar traffic (random split)" and show the jump to ~99%.
+
+STEP 6 - Dataset explorer (30 seconds)
+  Show the attack-type table and the "Too rare to learn" column
+  (Heartbleed, Infiltration, SQL Injection).
+
+STEP 7 - Prediction history (optional, 15 seconds)
+  Show that only verdicts are stored, never the traffic itself.
+
+
+---------------------------------------------------------------------
+PART 5 - KEY NUMBERS TO REMEMBER
+---------------------------------------------------------------------
+
+  Dataset            CICIDS2017, 8 files, 2,830,743 records, 78 features
+  Attack share       19.7% attacks, 80.3% normal
+  Training sample    40,160 rows (max 3,000 per class per file, fits 8 GB RAM)
+  Random split       Random Forest F1 = 0.995, accuracy 99.6%, false alarms 0.13%
+  Wednesday holdout  Random Forest recall 20.0% (600 of 3,000 attacks)
+                     Logistic Regression recall 32.9% (986 of 3,000),
+                     181 false alarms (6.0%)
+  Attack-type model  11 attack types, macro F1 = 0.93
+  Confidence rule    attack type shown only if confidence >= 0.60
+  Tests              19 automated tests, all passing
+
+
+---------------------------------------------------------------------
+PART 6 - LIKELY QUESTIONS AND SHORT ANSWERS
+---------------------------------------------------------------------
+
+Q: Why is the Wednesday result so low?
+A: Wednesday's attacks (mostly DoS GoldenEye) look different from
+   the training days. The random split puts similar records in both
+   training and testing, which makes it look easier than real life.
+
+Q: What is "true label"?
+A: The correct answer from the dataset. The model never sees it; we
+   only use it afterwards to grade the predictions.
+
+Q: Why two Random Forests?
+A: A controlled test: one with class weighting, one without. The
+   weighting made almost no difference (20.0% vs 22.0%).
+
+Q: What is SHAP?
+A: A method that shows how much each feature pushed a single
+   prediction towards attack or normal.
+
+Q: How do you avoid data leakage?
+A: Each model is a scikit-learn pipeline, so missing values are
+   filled using the training data only. Wednesday is removed from
+   training completely.
+
+Q: What are "missing or invalid cells" (5,734)?
+A: Mostly "Infinity" values from dividing by a zero-length connection
+   time. We treat them as missing and fill them with the median
+   learned from the training data.
+
+Q: Does it monitor a live network?
+A: No. It analyses stored or uploaded CSV records. Live capture is
+   future work.
+
+
+---------------------------------------------------------------------
+PART 7 - IF SOMETHING GOES WRONG
+---------------------------------------------------------------------
+
+  "streamlit is not recognized"
+      -> Use the full command:
+         C:/Users/Admin/Anaconda/python.exe -m streamlit run dashboard/app.py
+
+  "Port 8501 is already in use"
+      -> The dashboard is already running. Open http://localhost:8501
+         or close the old terminal and start again.
+
+  Page shows "Upload rejected"
+      -> The CSV does not have the 78 expected columns. Use the
+         Demo sample instead.
+
+  Explain page is slow the first time
+      -> Normal: SHAP takes a few seconds. Records already explained
+         load instantly after that.
+
+  Page looks stuck or old
+      -> Press R in the browser (rerun), or refresh the page.
+=====================================================================

@@ -179,3 +179,11 @@ cython_debug/
 #  refer to https://docs.cursor.com/context/ignore-files
 .cursorignore
 .cursorindexingignore
+data/MachineLearningCSV/Friday-WorkingHours-Afternoon-PortScan.pcap_ISCX.csv
+data/MachineLearningCSV/Friday-WorkingHours-Morning.pcap_ISCX.csv
+data/MachineLearningCSV/Monday-WorkingHours.pcap_ISCX.csv
+data/MachineLearningCSV/Wednesday-workingHours.pcap_ISCX.csv
+data/MachineLearningCSV/Tuesday-WorkingHours.pcap_ISCX.csv
+data/MachineLearningCSV/Thursday-WorkingHours-Morning-WebAttacks.pcap_ISCX.csv
+data/MachineLearningCSV/Thursday-WorkingHours-Afternoon-Infilteration.pcap_ISCX.csv
+data/MachineLearningCSV/Friday-WorkingHours-Afternoon-DDos.pcap_ISCX.csv

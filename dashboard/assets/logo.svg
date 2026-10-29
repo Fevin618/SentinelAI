@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="168" height="32" viewBox="0 0 168 32">
+  <path d="M14 2 L25 6 V15 C25 22 20 27.5 14 30 C8 27.5 3 22 3 15 V6 Z" fill="#0b2b2d" stroke="#2dd4bf" stroke-width="2"/>
+  <path d="M9 16 L13 20 L20 11" fill="none" stroke="#2dd4bf" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="34" y="22" font-family="Segoe UI, Inter, Arial, sans-serif" font-size="18" font-weight="700" fill="#e8eef7">Sentinel<tspan fill="#2dd4bf">AI</tspan></text>
+</svg>

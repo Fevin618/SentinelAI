@@ -1,0 +1,12 @@
+numpy
+pandas
+pytest
+# Saved models were trained with this exact version; keep it pinned so they load cleanly.
+scikit-learn==1.7.2
+joblib
+streamlit
+shap
+matplotlib
+plotly
+# Only needed for tmp/pdfs/generate_viva_guide.py
+reportlab

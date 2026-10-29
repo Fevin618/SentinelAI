@@ -1,0 +1,8 @@
+{
+  "source_directory": "data\\MachineLearningCSV",
+  "output_file": "data\\processed\\clean_sample.csv",
+  "rows_written": 8000,
+  "rows_dropped_for_missing_label_or_duplicate_within_chunk": 2503,
+  "rows_per_source_file_cap": 1000,
+  "note": "Development sample only; original CSV files are preserved."
+}
